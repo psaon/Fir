@@ -1,32 +1,13 @@
-# Prerequisites
-*.d
+# Binary and intermediate binary folders
+bin/
+lib/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Cmake folders
+build/
+out/
 
-# Precompiled Headers
-*.gch
-*.pch
+# VS code folder
+.vscode/
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# VS folder
+.vs/
