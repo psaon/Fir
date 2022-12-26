@@ -11,6 +11,15 @@ namespace Fir
 		return end - string - 1;
 	}
 
+	template<typename CharType>
+	CharType* CharTraits<CharType>::Copy(CharType* dest, const CharType* source)
+	{
+		while (*source)
+			*dest++ = *source++;
+		
+		return dest;
+	}
+
 	template class CharTraits<char>;
 	template class CharTraits<wchar_t>;
 	template class CharTraits<char16_t>;

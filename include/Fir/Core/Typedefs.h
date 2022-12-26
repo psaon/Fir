@@ -36,11 +36,17 @@
 /**
  * Macro to turn the argument to a string.
 */
-#define FIR_MAKE_STR(arg) #arg
+#define FIR_STRINGIFY(arg) #arg
 
 /**
  * Macro for unreferenced variables.
 */
 #define FIR_UNREF(var) (void)var
+
+/**
+ * Macros for maths.
+ * Use the <math.h> header for actual usage.
+*/
+#define FIR_MAX(x, y) ((x > y) ? x : y)
 
 #endif      // Typedefs.h
