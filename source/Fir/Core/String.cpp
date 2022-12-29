@@ -30,7 +30,7 @@ namespace Fir
         {
             buffer = _data.ptr = (CharType*)calloc(_size + 1, sizeof(CharType));
             if (!_data.ptr)
-                throw ERR_FAILED_ALLOC;
+                throw FailedAllocException();
 
             _capacity = _size;
         }
@@ -227,14 +227,14 @@ namespace Fir
                 else
                 {
                     free(_data.ptr);
-                    throw ERR_FAILED_ALLOC;
+                    throw FailedAllocException();
                 }
             }
             else
             {
                 CharType* heapBuffer = (CharType*)calloc(newCap + 1, sizeof(CharType));
                 if (!heapBuffer)
-                    throw ERR_FAILED_ALLOC;
+                    throw FailedAllocException();
 
                 Traits::Copy(heapBuffer, _data.buffer);
                 _data.ptr = heapBuffer;

@@ -13,13 +13,12 @@ set(FIR_SOURCE_FILES
 
     # Include Files
     include/Fir/Core/CharTraits.h
-    include/Fir/Core/ErrorList.h
+    include/Fir/Core/Exception.h
     include/Fir/Core/String.h
     include/Fir/Core/Typedefs.h
     
     # Source Files
     source/Fir/Core/CharTraits.cpp
-    source/Fir/Core/ErrorList.cpp
     source/Fir/Core/String.cpp
 )
 

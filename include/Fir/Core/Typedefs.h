@@ -4,7 +4,7 @@
 #include <stddef.h>                 // For the size_t type and the NULL macro.
 #include <stdint.h>                 // For int8_t -> int64_t and uint8_t -> uint64_t.
 
-#include "Fir/Core/ErrorList.h"
+#include "Fir/Core/Exception.h"
 
 /**
  * Identify the Operating System.
