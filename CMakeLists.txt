@@ -13,11 +13,13 @@ set(FIR_SOURCE_FILES
 
     # Include Files
     include/Fir/Core/CharTraits.h
+    include/Fir/Core/ErrorList.h
     include/Fir/Core/String.h
     include/Fir/Core/Typedefs.h
     
     # Source Files
     source/Fir/Core/CharTraits.cpp
+    source/Fir/Core/ErrorList.cpp
     source/Fir/Core/String.cpp
 )
 
@@ -28,6 +30,11 @@ option(FIR_BUILD_EXAMPLES "Build the examples." ON)
 if (MSVC)
     string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus")   # Get MSVC to report the correct C++ version.
     string(APPEND CMAKE_CXX_FLAGS " /W4")               # Set the warning level to level 4.
+endif()
+
+# Macros for build types.
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_definitions("-DFIR_CONFIG_DEBUG")
 endif()
 
 include_directories(include)

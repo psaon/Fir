@@ -30,7 +30,7 @@ namespace Fir
         {
             buffer = _data.ptr = (CharType*)calloc(_size + 1, sizeof(CharType));
             if (!_data.ptr)
-                throw 110;
+                throw ERR_FAILED_ALLOC;
 
             _capacity = _size;
         }
@@ -71,6 +71,25 @@ namespace Fir
 //* ==================================================
 
     template<typename CharType>
+    StringBase<CharType>& StringBase<CharType>::Append(const StringBase<CharType>& string)
+    {
+        size_t newSize = Size() + string.Size();
+        if (newSize > Capacity())
+            _Reallocate(newSize);
+
+        Traits::Append(_IsLong() ? _data.ptr : _data.buffer, string.Data());
+        _size = newSize;
+        
+        return *this;
+    }
+
+    template<typename CharType>
+    CharType& StringBase<CharType>::Begin() const
+    {
+        return operator[](0);
+    }
+
+    template<typename CharType>
     size_t StringBase<CharType>::Capacity() const
     {
         return _capacity;
@@ -83,9 +102,90 @@ namespace Fir
     }
 
     template<typename CharType>
+    bool StringBase<CharType>::Empty() const
+    {
+        return Size() == 0;
+    }
+
+    template<typename CharType>
+    CharType& StringBase<CharType>::End() const
+    {
+        return operator[](Size() - 1);
+    }
+
+    template<typename CharType>
+    size_t StringBase<CharType>::Find(CharType character)
+    {
+        CharType* ptr = Traits::Find(&Begin(), character);
+        return ptr ? ptr - Data() : NO_POS;
+    }
+
+    template<typename CharType>
+    size_t StringBase<CharType>::Length() const
+    {
+        return _size;
+    }
+
+    template<typename CharType>
+    void StringBase<CharType>::Reserve(size_t newCap)
+    {
+        _Reallocate(newCap);
+    }
+
+    template<typename CharType>
+    void StringBase<CharType>::Shrink()
+    {
+        if (_IsLong())
+            _Reallocate(Size());
+    }
+
+    template<typename CharType>
     size_t StringBase<CharType>::Size() const
     {
         return _size;
+    }
+
+//* ==================================================
+//* [SECTION]: Operators
+//* ==================================================
+
+    template<typename CharType>
+    StringBase<CharType>& StringBase<CharType>::operator+=(const StringBase& string)
+    {
+        return Append(string);
+    }
+
+    template<typename CharType>
+    StringBase<CharType> StringBase<CharType>::operator+(const StringBase<CharType>& string)
+    {
+        auto ret = *this;
+        ret.Append(string);
+
+        return ret;
+    }
+
+    template<typename CharType>
+    bool StringBase<CharType>::operator==(const StringBase<CharType>& string)
+    {
+        return (Size() == string.Size()) && Traits::Compare(Data(), string.Data(), Size());
+    }
+
+    template<typename CharType>
+    bool StringBase<CharType>::operator!=(const StringBase<CharType>& string)
+    {
+        return !(*this == string);
+    }
+
+    template<typename CharType>
+    StringBase<CharType>::operator bool() const
+    {
+        return Size() != 0;
+    }
+
+    template<typename CharType>
+    CharType& StringBase<CharType>::operator[](size_t index) const
+    {
+        return const_cast<CharType&>(Data()[index]);
     }
 
 //* ==================================================
@@ -109,7 +209,7 @@ namespace Fir
             if (_IsLong())
             {
                 CharType* heapBuffer = _data.ptr;
-                Traits::Copy(_data.buffer, heapBuffer);
+                memcpy(_data.buffer, heapBuffer, sizeof(CharType) * _bufferSize);   // Can cause buffer overflows if using Traits::Copy
                 free(heapBuffer);
 
                 _capacity = _bufferSize - 1;
@@ -121,15 +221,20 @@ namespace Fir
         {
             if (_IsLong())
             {
-                _data.ptr = (CharType*)realloc(_data.ptr, (newCap + 1) * sizeof(CharType));
-                if (!_data.ptr)
-                    throw 110;
+                CharType* newBlock = (CharType*)realloc(_data.ptr, (newCap + 1) * sizeof(CharType));
+                if (newBlock)
+                    _data.ptr = newBlock;
+                else
+                {
+                    free(_data.ptr);
+                    throw ERR_FAILED_ALLOC;
+                }
             }
             else
             {
                 CharType* heapBuffer = (CharType*)calloc(newCap + 1, sizeof(CharType));
                 if (!heapBuffer)
-                    throw 110;
+                    throw ERR_FAILED_ALLOC;
 
                 Traits::Copy(heapBuffer, _data.buffer);
                 _data.ptr = heapBuffer;
@@ -145,6 +250,11 @@ namespace Fir
 //* ==================================================
     template class StringBase<char>;
     template class StringBase<wchar_t>;
+
+#if __cplusplus == 202022L
+    template class StringBase<char8_t>;
+#endif
+
     template class StringBase<char16_t>;
     template class StringBase<char32_t>;
 }

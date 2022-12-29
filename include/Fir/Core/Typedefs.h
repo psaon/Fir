@@ -4,6 +4,8 @@
 #include <stddef.h>                 // For the size_t type and the NULL macro.
 #include <stdint.h>                 // For int8_t -> int64_t and uint8_t -> uint64_t.
 
+#include "Fir/Core/ErrorList.h"
+
 /**
  * Identify the Operating System.
 */
@@ -22,6 +24,19 @@
 #else
 #   define FIR_COMPILER_UNKNOWN
 #   error Compiler unsupported.
+#endif
+
+/**
+ * Define some compiler specific macros.
+*/
+#if defined(FIR_COMPILER_MSVC)
+#   define _CRT_SECURE_NO_WARNINGS          // Turn off deprecation warnings for unsafe CRT functions.
+
+#	define FIR_ENABLE_MSVC_WARNING(code)  __pragma(warning(default: ##code))
+#	define FIR_DISABLE_MSVC_WARNING(code) __pragma(warning(disable: ##code))
+#else
+#	define FIR_ENABLE_MSVC_WARNING(code)
+#	define FIR_DISABLE_MSVC_WARNING(code)
 #endif
 
 /**
@@ -45,8 +60,11 @@
 
 /**
  * Macros for maths.
- * Use the <math.h> header for actual usage.
+ * Use the <math.h> header for actual mathematical operations.
+ * Some macros like abs() can result in -0 for floating point numbers.
 */
 #define FIR_MAX(x, y) ((x > y) ? x : y)
+#define FIR_MIN(x, y) ((x > y) ? y : x)
+#define FIR_ABS(x)	  ((x > 0) ? x : -x)
 
 #endif      // Typedefs.h
