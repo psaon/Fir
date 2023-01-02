@@ -59,6 +59,28 @@
 #define FIR_UNREF(var) (void)var
 
 /**
+ * Macro for force inlining.
+*/
+#if defined(FIR_COMPILER_MSVC)
+#	define FIR_FORCEINLINE __forceinline
+#else
+#	define FIR_FORCEINLINE inline
+#endif
+
+/**
+ * Macro for compiling as a shared library. (DLL in Windows)
+*/
+#if !defined(FIR_BUILD_STATIC)
+#	if defined(FIR_BUILD_SHARED)
+#		define FIR_API __declspec(dllexport)
+#	else
+#		define FIR_API __declspec(dllimport)
+#	endif
+#else
+#	define FIR_API
+#endif
+
+/**
  * Macros for maths.
  * Use the <math.h> header for actual mathematical operations.
  * Some macros like abs() can result in -0 for floating point numbers.

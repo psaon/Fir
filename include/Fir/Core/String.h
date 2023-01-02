@@ -13,7 +13,7 @@ FIR_DISABLE_MSVC_WARNING(4245);             // Disable signed/unsigned mismatch 
 namespace Fir
 {
     template<typename CharType>
-    class StringBase
+    class FIR_API StringBase
     {
     public:
         using Traits = Fir::CharTraits<CharType>;
@@ -71,6 +71,11 @@ namespace Fir
         size_t Length() const;
 
         /**
+         * Replaces this string with the specified string.
+        */
+        void Replace(const CharType* string);
+
+        /**
          * Reserves the amount of memory specified.
         */
         void Reserve(size_t newCap);
@@ -109,7 +114,7 @@ namespace Fir
         /**
          * Tests whether the string is empty.
         */
-        operator bool() const;
+        explicit operator bool() const;
 
         /**
          * Accesses the character at the specified index.

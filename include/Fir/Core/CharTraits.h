@@ -6,7 +6,7 @@
 namespace Fir
 {
     template<typename CharType>
-    class CharTraits
+    class FIR_API CharTraits
     {
     public:
         /**

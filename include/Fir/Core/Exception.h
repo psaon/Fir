@@ -17,7 +17,7 @@ namespace Fir
 }
 
 #define FIR_DEFINE_EXCEPTION(name, msg) \
-    class name : ::Fir::Exception { public: virtual const char* What() const noexcept override { return msg; } }
+    class name : public ::Fir::Exception { public: virtual const char* What() const noexcept override { return msg; } }
 
 namespace Fir
 {

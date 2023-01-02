@@ -6,6 +6,9 @@ lib/
 build/
 out/
 
+# Cmake settings
+CMakeSettings.json
+
 # VS code folder
 .vscode/
 

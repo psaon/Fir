@@ -127,6 +127,19 @@ namespace Fir
     }
 
     template<typename CharType>
+    void StringBase<CharType>::Replace(const CharType* string)
+    {
+        size_t len = Traits::Length(string);
+        CharType* ptr = &Begin();
+
+        if (len > Capacity())
+            ptr = _Reallocate(len);
+
+        Traits::Copy(ptr, string);
+        _size = len;
+    }
+
+    template<typename CharType>
     void StringBase<CharType>::Reserve(size_t newCap)
     {
         _Reallocate(newCap);
