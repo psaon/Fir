@@ -39,6 +39,14 @@ namespace Fir
     }
 
     template<typename CharType>
+    StringBase<CharType>::StringBase(const CharType& character)
+    {
+        _size = 1;
+        _capacity = _bufferSize - 1;
+        _data.buffer[0] = character;
+    }
+
+    template<typename CharType>
     StringBase<CharType>::StringBase(const StringBase& string)
         :StringBase(string.Data(), string._size)
     {
@@ -127,7 +135,7 @@ namespace Fir
     }
 
     template<typename CharType>
-    void StringBase<CharType>::Replace(const CharType* string)
+    StringBase<CharType>& StringBase<CharType>::Replace(const CharType* string)
     {
         size_t len = Traits::Length(string);
         CharType* ptr = &Begin();
@@ -137,12 +145,30 @@ namespace Fir
 
         Traits::Copy(ptr, string);
         _size = len;
+
+        return *this;
     }
 
     template<typename CharType>
     void StringBase<CharType>::Reserve(size_t newCap)
     {
         _Reallocate(newCap);
+    }
+
+    template<typename CharType>
+    StringBase<CharType>& StringBase<CharType>::Reverse()
+    {
+        size_t i, j;
+        CharType c;
+
+        for (i = 0, j = Size() - 1; i < j; ++i, --j)
+        {
+            c = operator[](i);
+            operator[](i) = operator[](j);
+            operator[](j) = c;
+        }
+
+        return *this;
     }
 
     template<typename CharType>

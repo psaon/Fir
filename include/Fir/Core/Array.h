@@ -1,6 +1,8 @@
 #ifndef __FIR_INCLUDE_ARRAY_H__
 #define __FIR_INCLUDE_ARRAY_H__
 
+#include "Fir/Core/Typedefs.h"
+
 namespace Fir
 {
     template<typename Type, size_t ArraySize>

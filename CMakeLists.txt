@@ -15,9 +15,11 @@ option(FIR_BUILD_EXAMPLES "Build the examples." ON)
 option(FIR_BUILD_SHARED "Build as a shared library." ON)
 
 # Add some flags for MSVC.
-if (MSVC)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus")   # Get MSVC to report the correct C++ version.
     string(APPEND CMAKE_CXX_FLAGS " /W4")               # Set the warning level to level 4.
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    string(APPEND CMAKE_CXX_FLAGS " -Wall")             # Get G++ to report all warnings.
 endif()
 
 # Macros for build types.

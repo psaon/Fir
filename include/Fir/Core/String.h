@@ -22,6 +22,7 @@ namespace Fir
         StringBase() = default;
         StringBase(const CharType* string);
         StringBase(const CharType* string, size_t size);
+        StringBase(const CharType& character);
 
         StringBase(const StringBase& string);
         StringBase(StringBase&& string);
@@ -73,12 +74,17 @@ namespace Fir
         /**
          * Replaces this string with the specified string.
         */
-        void Replace(const CharType* string);
+        StringBase<CharType>& Replace(const CharType* string);
 
         /**
          * Reserves the amount of memory specified.
         */
         void Reserve(size_t newCap);
+
+        /**
+         * Reverses the string.
+        */
+        StringBase<CharType>& Reverse();
 
         /**
          * Removes unused capacity.

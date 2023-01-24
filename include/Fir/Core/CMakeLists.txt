@@ -7,11 +7,13 @@ set(FIR_CORE_SOURCE_FILES
     CharTraits.h
     Exception.h
     String.h
+    StringUtils.h
     Typedefs.h
     
     # Source Files
     ${CMAKE_SOURCE_DIR}/source/Fir/Core/CharTraits.cpp
     ${CMAKE_SOURCE_DIR}/source/Fir/Core/String.cpp
+    ${CMAKE_SOURCE_DIR}/source/Fir/Core/StringUtils.cpp
 )
 
 if (${FIR_BUILD_SHARED})
