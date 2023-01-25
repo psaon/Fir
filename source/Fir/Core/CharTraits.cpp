@@ -5,50 +5,54 @@
 namespace Fir
 {
 	template<typename CharType>
-	size_t CharTraits<CharType>::Length(const CharType* string)
+	size_t CharTraits<CharType>::Length(const CharType* p_str)
 	{
-		const CharType* end = string;
+		const CharType* end = p_str;
 		while (*end++);
 
-		return end - string - 1;
+		return end - p_str - 1;
 	}
 
 	template<typename CharType>
-	CharType* CharTraits<CharType>::Copy(CharType* dest, const CharType* source)
+	CharType* CharTraits<CharType>::Copy(CharType* p_dest, const CharType* p_src)
 	{
-		while (*source)
-			*dest++ = *source++;
+		// Copy the characters.
+		while (*p_src)
+			*p_dest++ = *p_src++;
+
+		// Copy the null terminator.
+		*p_dest = *p_src;
 		
-		return dest;
+		return p_dest;
 	}
 
 	template<typename CharType>
-	CharType* CharTraits<CharType>::Append(CharType* dest, const CharType* source)
+	CharType* CharTraits<CharType>::Append(CharType* p_dest, const CharType* p_src)
 	{
 		// Get the null terminator of the destination string.
-		CharType* end = dest;
+		CharType* end = p_dest;
 		while (*++end);
 
 		// Copy the string onto the end of it.
-		while (*source)
-			*end++ = *source++;
+		while (*p_src)
+			*end++ = *p_src++;
 
-		return dest;
+		return p_dest;
 	}
 
 	template<typename CharType>
-	bool CharTraits<CharType>::Compare(const CharType* str1, const CharType* str2, size_t n)
+	bool CharTraits<CharType>::Equal(const CharType* p_str1, const CharType* p_str2, size_t p_n)
 	{
-		return memcmp(str1, str2, n) == 0;
+		return memcmp(p_str1, p_str2, p_n) == 0;
 	}
 
 	template<typename CharType>
-	CharType* CharTraits<CharType>::Find(CharType* string, const CharType character)
+	CharType* CharTraits<CharType>::Find(CharType* p_str, const CharType p_char)
 	{
-		CharType* ptr = string;
+		CharType* ptr = p_str;
 		while (*ptr)
 		{
-			if (*ptr == character)
+			if (*ptr == p_char)
 				return ptr;
 
 			ptr++;

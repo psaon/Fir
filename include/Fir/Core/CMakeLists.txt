@@ -3,17 +3,17 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set(FIR_CORE_SOURCE_FILES 
     # Include Files
-    Array.h
+    #Array.h
     CharTraits.h
     Exception.h
     String.h
-    StringUtils.h
+    #StringUtils.h
     Typedefs.h
     
     # Source Files
     ${CMAKE_SOURCE_DIR}/source/Fir/Core/CharTraits.cpp
     ${CMAKE_SOURCE_DIR}/source/Fir/Core/String.cpp
-    ${CMAKE_SOURCE_DIR}/source/Fir/Core/StringUtils.cpp
+    #${CMAKE_SOURCE_DIR}/source/Fir/Core/StringUtils.cpp
 )
 
 if (${FIR_BUILD_SHARED})

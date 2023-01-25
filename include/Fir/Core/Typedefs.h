@@ -114,4 +114,6 @@
 #define FIR_ABS(x)    ((x > 0) ? x : -x)
 #define FIR_SIGN(x)   ((x < 0) ? -1 : (x == 0) ? 0 : 1)
 
+#define _FIR Fir::
+
 #endif      // Typedefs.h

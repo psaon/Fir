@@ -12,28 +12,28 @@ namespace Fir
         /**
          * Calculates the length of the string.
         */
-        static size_t Length(const CharType* string);
+        static size_t Length(const CharType* p_str);
 
         /**
-            * Copies the source string to the memory address pointed by destination.
+          * Copies the source string to the memory address pointed by destination.
         */
-        static CharType* Copy(CharType* dest, const CharType* source);
+        static CharType* Copy(CharType* p_dest, const CharType* p_src);
 
         /**
          * Appends the source string onto the end of the destination string.
         */
-        static CharType* Append(CharType* dest, const CharType* source);
+        static CharType* Append(CharType* p_dest, const CharType* p_src);
 
         /**
          * Tests whether the two specified strings are equal.
         */
-        static bool Compare(const CharType* str1, const CharType* str2, size_t n);
+        static bool Equal(const CharType* p_str1, const CharType* p_str2, size_t p_n);
 
         /**
          * Searches for the character specified.
          * Returns a null pointer if the character isn't found.
         */
-        static CharType* Find(CharType* string, const CharType character);
+        static CharType* Find(CharType* p_str, const CharType p_char);
 
     public:
         static const CharType NULL_CHAR = static_cast<CharType>('\0');
