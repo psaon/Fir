@@ -109,6 +109,15 @@ namespace Fir
     size_t _FIR StringBase<CharType>::Capacity() const { return _capacity; }
 
     template<typename CharType>
+    bool _FIR StringBase<CharType>::Empty() const
+    {
+        return _size > 0;
+    }
+
+    template<typename CharType>
+    size_t _FIR StringBase<CharType>::Length() const { return _size; }
+
+    template<typename CharType>
     _FIR StringBase<CharType>& _FIR StringBase<CharType>::Reserve(size_t p_newCap)
     {
         // Return if the new capacity is smaller than the original capacity.

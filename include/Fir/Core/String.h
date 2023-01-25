@@ -33,6 +33,8 @@ namespace Fir
         const CharType* Data() const;
         
         size_t Capacity() const;
+        bool Empty() const;
+        size_t Length() const;
         _String& Reserve(size_t p_newCap);
         size_t Size() const;
 
