@@ -5,6 +5,10 @@
 
 namespace Fir
 {
+//* ==================================================
+//* [SECTION]: The Constructors & The Destructor
+//* ==================================================
+
     template<typename CharType>
     _FIR StringBase<CharType>::StringBase(CharType p_char)
     {
@@ -87,11 +91,9 @@ namespace Fir
             free(_data.ptr);
     }
 
-    template<typename CharType>
-    size_t _FIR StringBase<CharType>::Size() const { return _size; }
-
-    template<typename CharType>
-    size_t _FIR StringBase<CharType>::Capacity() const { return _capacity; }
+//* ==================================================
+//* [SECTION]: Element Access Member Functions
+//* ==================================================
 
     template<typename CharType>
     const CharType* _FIR StringBase<CharType>::Data() const
@@ -99,11 +101,55 @@ namespace Fir
         return _IsLong() ? _data.ptr : _data.buffer;
     }
 
+//* ==================================================
+//* [SECTION]: Capacity Member Functions
+//* ==================================================
+
     template<typename CharType>
-    bool _FIR StringBase<CharType>::_IsLong() const
+    size_t _FIR StringBase<CharType>::Capacity() const { return _capacity; }
+
+    template<typename CharType>
+    _FIR StringBase<CharType>& _FIR StringBase<CharType>::Reserve(size_t p_newCap)
     {
-        return _capacity > _bufferSize - 1;
+        // Return if the new capacity is smaller than the original capacity.
+        if (p_newCap <= _capacity)
+            return *this;
+
+        size_t bytesAlloc = (p_newCap + 1) * sizeof(CharType);
+
+        if (_IsLong())
+        {
+            // Reallocate the buffer.
+            CharType* buffer = (CharType*)realloc(_data.ptr, bytesAlloc);
+            if (!buffer)
+                throw _FIR FailedAllocException();
+
+            _data.ptr = buffer;
+        }
+        else
+        {
+            // Allocate buffer on the heap.
+            CharType* buffer = (CharType*)malloc(bytesAlloc);
+            if (!buffer)
+                throw _FIR FailedAllocException();
+
+            // Copy the contents of the stack allocated buffer to
+            // the heap allocated buffer.
+            _Traits::Copy(buffer, _data.buffer);
+            _data.ptr = buffer;
+        }
+        
+        // Set capacity to the new capacity.
+        _capacity = p_newCap;
+        return *this;
     }
+
+    template<typename CharType>
+    size_t _FIR StringBase<CharType>::Size() const { return _size; }
+
+//* ==================================================
+//* [SECTION]: Operator Member Functions
+//* ==================================================
 
     template<typename CharType>
     _FIR StringBase<CharType>& _FIR StringBase<CharType>::operator=(const _String& p_str)
@@ -152,6 +198,12 @@ namespace Fir
         p_str._data.ptr = nullptr;
 
         return *this;
+    }
+
+    template<typename CharType>
+    bool _FIR StringBase<CharType>::_IsLong() const
+    {
+        return _capacity > _bufferSize - 1;
     }
 
     template class _FIR StringBase<char>;

@@ -30,8 +30,10 @@ namespace Fir
         ~StringBase();
 
     public:
-        size_t Capacity() const;
         const CharType* Data() const;
+        
+        size_t Capacity() const;
+        _String& Reserve(size_t p_newCap);
         size_t Size() const;
 
     public:

@@ -12,4 +12,12 @@ int main()
     Fir::StringBase<char16_t> short_16_string = u"Hello";
     Fir::StringBase<char16_t> long_16_string = u"Hello, World!";
     Fir::StringBase<char16_t> null_16_string = u'\0';
+
+    short_16_string.Reserve(6);
+    long_16_string.Reserve(6);
+    null_16_string.Reserve(6);
+
+    short_16_string.Reserve(30);
+    long_16_string.Reserve(100);
+    null_16_string.Reserve(30);
 }
