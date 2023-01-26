@@ -3,6 +3,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set(FIR_CORE_SOURCE_FILES 
     # Include Files
+    Allocator.h
     #Array.h
     CharTraits.h
     Exception.h
@@ -11,6 +12,7 @@ set(FIR_CORE_SOURCE_FILES
     Typedefs.h
     
     # Source Files
+    ${CMAKE_SOURCE_DIR}/source/Fir/Core/Allocator.cpp
     ${CMAKE_SOURCE_DIR}/source/Fir/Core/CharTraits.cpp
     ${CMAKE_SOURCE_DIR}/source/Fir/Core/String.cpp
     #${CMAKE_SOURCE_DIR}/source/Fir/Core/StringUtils.cpp

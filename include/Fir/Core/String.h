@@ -2,6 +2,8 @@
 #define __FIR_INCLUDE_STRING_H__
 
 #include "Fir/Core/Config.h"
+
+#include "Fir/Core/Allocator.h"
 #include "Fir/Core/CharTraits.h"
 
 #if !defined(FIR_SSO_MAX_CHARS)
@@ -10,12 +12,12 @@
 
 namespace Fir
 {
-    template<typename CharType>
+    template<typename CharType, typename AllocType>
     class FIR_API StringBase
     {
     private:
         using _Traits = _FIR CharTraits<CharType>;
-        using _String = _FIR StringBase<CharType>;
+        using _String = _FIR StringBase<CharType, AllocType>;
 
     public:
         StringBase() = default;
@@ -30,17 +32,26 @@ namespace Fir
         ~StringBase();
 
     public:
+        CharType& At(const size_t p_index);
+        const CharType& At(const size_t p_index) const;
+        CharType& Back();
+        const CharType& Back() const;
         const CharType* Data() const;
+        CharType& Front();
+        const CharType& Front() const;
         
         size_t Capacity() const;
         bool Empty() const;
         size_t Length() const;
-        _String& Reserve(size_t p_newCap);
+        _String& Reserve(const size_t p_newCap);
         size_t Size() const;
 
     public:
         _String& operator=(const _String& p_str);
         _String& operator=(_String&& p_str);
+        
+        CharType& operator[](const size_t p_index);
+        const CharType& operator[](const size_t p_index) const;
 
     private:
         // Checks whether the string is allocated on the heap.
@@ -58,17 +69,19 @@ namespace Fir
 
         size_t _size = 0;
         size_t _capacity = _bufferSize - 1;
+
+        AllocType _allocator;
     };
 
-    using String = _FIR StringBase<char>;
-    using Wstring = _FIR StringBase<wchar_t>;
+    using String = _FIR StringBase<char, _FIR Allocator>;
+    using Wstring = _FIR StringBase<wchar_t, _FIR Allocator>;
 
 #if __cplusplus == 202022L
-    using U8string = _FIR StringBase<char8_t>;
+    using U8string = _FIR StringBase<char8_t, _FIR Allocator>;
 #endif
 
-    using U16string = _FIR StringBase<char16_t>;
-    using U32string = _FIR StringBase<char32_t>;
+    using U16string = _FIR StringBase<char16_t, _FIR Allocator>;
+    using U32string = _FIR StringBase<char32_t, _FIR Allocator>;
 }
 
 #endif      // String.h

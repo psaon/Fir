@@ -22,6 +22,7 @@ namespace Fir
 namespace Fir
 {
     FIR_DEFINE_EXCEPTION(FailedAllocException, "Failed to allocate memory.");
+    FIR_DEFINE_EXCEPTION(OutOfBoundsException, "Out of bounds.");
 }
 
 #endif        // Exception.h

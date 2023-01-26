@@ -1,6 +1,4 @@
 #include "Fir/Core/String.h"
-
-#include <stdlib.h>         // For malloc(), free()
 #include <string.h>         // For memcpy()
 
 namespace Fir
@@ -9,8 +7,8 @@ namespace Fir
 //* [SECTION]: The Constructors & The Destructor
 //* ==================================================
 
-    template<typename CharType>
-    _FIR StringBase<CharType>::StringBase(CharType p_char)
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>::StringBase(CharType p_char)
     {
         if (p_char == _Traits::NULL_CHAR)
             return;
@@ -21,21 +19,21 @@ namespace Fir
         _data.buffer[0] = p_char;
     }
 
-    template<typename CharType>
-    _FIR StringBase<CharType>::StringBase(const CharType* p_str)
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>::StringBase(const CharType* p_str)
         :StringBase(p_str, _Traits::Length(p_str))
     {
     }
 
-    template<typename CharType>
-    _FIR StringBase<CharType>::StringBase(const CharType* p_str, size_t p_size)
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>::StringBase(const CharType* p_str, size_t p_size)
     {
         CharType* buffer = _data.buffer;
 
         // Checks whether the string should be allocated on the heap.
         if (p_size > _bufferSize - 1)
         {
-            buffer = _data.ptr = (CharType*)malloc((p_size + 1) * sizeof(CharType));
+            buffer = _data.ptr = (CharType*)_allocator.Allocate((p_size + 1) * sizeof(CharType));
             if (!buffer) throw _FIR FailedAllocException();
 
             _capacity = p_size;
@@ -46,15 +44,15 @@ namespace Fir
         _size = p_size;
     }
 
-    template<typename CharType>
-    _FIR StringBase<CharType>::StringBase(const _String& p_str)
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>::StringBase(const _String& p_str)
     {
         CharType* buffer = _data.buffer;
 
         // Check whether the string should be allocated on the heap.
         if (p_str._IsLong())
         {
-            buffer = _data.ptr = (CharType*)malloc(p_str.Capacity() * sizeof(CharType));
+            buffer = _data.ptr = (CharType*)_allocator.Allocate(p_str.Capacity() * sizeof(CharType));
             if (!buffer)
                 throw _FIR FailedAllocException();
         }
@@ -66,8 +64,8 @@ namespace Fir
         _size = p_str.Size();
     }
 
-    template<typename CharType>
-    _FIR StringBase<CharType>::StringBase(_String&& p_str)
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>::StringBase(_String&& p_str)
     {
         // Copy
         _size = p_str.Size();
@@ -84,41 +82,71 @@ namespace Fir
         p_str._data.ptr = nullptr;
     }
 
-    template<typename CharType>
-    _FIR StringBase<CharType>::~StringBase()
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>::~StringBase()
     {
         if (_IsLong())
-            free(_data.ptr);
+            _allocator.Free(_data.ptr);
     }
 
 //* ==================================================
 //* [SECTION]: Element Access Member Functions
 //* ==================================================
 
-    template<typename CharType>
-    const CharType* _FIR StringBase<CharType>::Data() const
+    template<typename CharType, typename AllocType>
+    CharType& _FIR StringBase<CharType, AllocType>::At(const size_t p_index)
+    {
+        if (p_index >= Size())
+            throw _FIR OutOfBoundsException();
+
+        return operator[](p_index);
+    }
+
+    template<typename CharType, typename AllocType>
+    const CharType& _FIR StringBase<CharType, AllocType>::At(const size_t p_index) const
+    {
+        if (p_index >= Size())
+            throw _FIR OutOfBoundsException();
+
+        return operator[](p_index);
+    }
+
+    template<typename CharType, typename AllocType>
+    const CharType* _FIR StringBase<CharType, AllocType>::Data() const
     {
         return _IsLong() ? _data.ptr : _data.buffer;
     }
+
+    template<typename CharType, typename AllocType>
+    CharType& _FIR StringBase<CharType, AllocType>::Front() { return operator[](0); }
+
+    template<typename CharType, typename AllocType>
+    const CharType& _FIR StringBase<CharType, AllocType>::Front() const { return operator[](0); }
+
+    template<typename CharType, typename AllocType>
+    CharType& _FIR StringBase<CharType, AllocType>::Back() { return operator[](Size() - 1); }
+
+    template<typename CharType, typename AllocType>
+    const CharType& _FIR StringBase<CharType, AllocType>::Back() const { return operator[](Size() - 1); }
 
 //* ==================================================
 //* [SECTION]: Capacity Member Functions
 //* ==================================================
 
-    template<typename CharType>
-    size_t _FIR StringBase<CharType>::Capacity() const { return _capacity; }
+    template<typename CharType, typename AllocType>
+    size_t _FIR StringBase<CharType, AllocType>::Capacity() const { return _capacity; }
 
-    template<typename CharType>
-    bool _FIR StringBase<CharType>::Empty() const
+    template<typename CharType, typename AllocType>
+    bool _FIR StringBase<CharType, AllocType>::Empty() const
     {
         return _size > 0;
     }
 
-    template<typename CharType>
-    size_t _FIR StringBase<CharType>::Length() const { return _size; }
+    template<typename CharType, typename AllocType>
+    size_t _FIR StringBase<CharType, AllocType>::Length() const { return _size; }
 
-    template<typename CharType>
-    _FIR StringBase<CharType>& _FIR StringBase<CharType>::Reserve(size_t p_newCap)
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>& _FIR StringBase<CharType, AllocType>::Reserve(const size_t p_newCap)
     {
         // Return if the new capacity is smaller than the original capacity.
         if (p_newCap <= _capacity)
@@ -129,7 +157,7 @@ namespace Fir
         if (_IsLong())
         {
             // Reallocate the buffer.
-            CharType* buffer = (CharType*)realloc(_data.ptr, bytesAlloc);
+            CharType* buffer = (CharType*)_allocator.Reallocate(_data.ptr, bytesAlloc);
             if (!buffer)
                 throw _FIR FailedAllocException();
 
@@ -138,7 +166,7 @@ namespace Fir
         else
         {
             // Allocate buffer on the heap.
-            CharType* buffer = (CharType*)malloc(bytesAlloc);
+            CharType* buffer = (CharType*)_allocator.Allocate(bytesAlloc);
             if (!buffer)
                 throw _FIR FailedAllocException();
 
@@ -153,25 +181,25 @@ namespace Fir
         return *this;
     }
 
-    template<typename CharType>
-    size_t _FIR StringBase<CharType>::Size() const { return _size; }
+    template<typename CharType, typename AllocType>
+    size_t _FIR StringBase<CharType, AllocType>::Size() const { return _size; }
 
 //* ==================================================
 //* [SECTION]: Operator Member Functions
 //* ==================================================
 
-    template<typename CharType>
-    _FIR StringBase<CharType>& _FIR StringBase<CharType>::operator=(const _String& p_str)
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>& _FIR StringBase<CharType, AllocType>::operator=(const _String& p_str)
     {
         // Free the heap allocated buffer.
         if (_IsLong())
-            free(_data.ptr);
+            _allocator.Free(_data.ptr);
 
         // Check whether the string should be allocated on the heap.
         CharType* buffer = _data.buffer;
         if (p_str._IsLong())
         {
-            buffer = _data.ptr = (CharType*)malloc((p_str.Capacity() + 1) * sizeof(CharType));
+            buffer = _data.ptr = (CharType*)_allocator.Allocate((p_str.Capacity() + 1) * sizeof(CharType));
             if (!buffer)
                 throw _FIR FailedAllocException();
         }
@@ -185,12 +213,12 @@ namespace Fir
         return *this;
     }
 
-    template<typename CharType>
-    _FIR StringBase<CharType>& _FIR StringBase<CharType>::operator=(_String&& p_str)
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>& _FIR StringBase<CharType, AllocType>::operator=(_String&& p_str)
     {
         // Free
         if (_IsLong())
-            free(_data.ptr);
+            _allocator.Free(_data.ptr);
 
         // Copy
         _size = p_str.Size();
@@ -209,21 +237,52 @@ namespace Fir
         return *this;
     }
 
-    template<typename CharType>
-    bool _FIR StringBase<CharType>::_IsLong() const
+    template<typename CharType, typename AllocType>
+    CharType& _FIR StringBase<CharType, AllocType>::operator[](const size_t p_index)
+    {
+        CharType* buffer = _IsLong() ? _data.ptr : _data.buffer;
+        return buffer[p_index];
+    }
+
+    template<typename CharType, typename AllocType>
+    const CharType& _FIR StringBase<CharType, AllocType>::operator[](const size_t p_index) const
+    {
+        const CharType* buffer = _IsLong() ? _data.ptr : _data.buffer;
+        return buffer[p_index];
+    }
+
+//* ==================================================
+//* [SECTION]: Private Member Functions
+//* ==================================================
+
+    template<typename CharType, typename AllocType>
+    bool _FIR StringBase<CharType, AllocType>::_IsLong() const
     {
         return _capacity > _bufferSize - 1;
     }
 
-    template class _FIR StringBase<char>;
-    template class _FIR StringBase<wchar_t>;
+    template class _FIR StringBase<char, _FIR Allocator>;
+    template class _FIR StringBase<wchar_t, _FIR Allocator>;
 
 #if __cplusplus == 202022L
-    template class _FIR StringBase<char8_t>;
+    template class _FIR StringBase<char8_t, _FIR Allocator>;
 #endif
 
-    template class _FIR StringBase<char16_t>;
-    template class _FIR StringBase<char32_t>;
+    template class _FIR StringBase<char16_t, _FIR Allocator>;
+    template class _FIR StringBase<char32_t, _FIR Allocator>;
+
+
+#if defined(FIR_STRING_CUSTOM_ALLOCATOR)
+    template class _FIR StringBase<char, FIR_STRING_CUSTOM_ALLOCATOR>;
+    template class _FIR StringBase<wchar_t, FIR_STRING_CUSTOM_ALLOCATOR>;
+
+#   if __cplusplus == 202022L
+    template class _FIR StringBase<char8_t, FIR_STRING_CUSTOM_ALLOCATOR>;
+#   endif
+
+    template class _FIR StringBase<char16_t, FIR_STRING_CUSTOM_ALLOCATOR>;
+    template class _FIR StringBase<char32_t, FIR_STRING_CUSTOM_ALLOCATOR>;
+#endif
 }
 
 // #include <string.h>
@@ -235,14 +294,14 @@ namespace Fir
 // //* [SECTION]: Constructor & Destructor
 // //* ==================================================
 
-//     template<typename CharType>
-//     StringBase<CharType>::StringBase(const CharType* string)
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>::StringBase(const CharType* string)
 //         :StringBase(string, Traits::Length(string))
 //     {
 //     }
 
-//     template<typename CharType>
-//     StringBase<CharType>::StringBase(const CharType* string, size_t size)
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>::StringBase(const CharType* string, size_t size)
 //     {
 //         CharType* buffer;
 //         _size = size;
@@ -264,22 +323,22 @@ namespace Fir
 //         Traits::Copy(buffer, string);
 //     }
 
-//     template<typename CharType>
-//     StringBase<CharType>::StringBase(const CharType& character)
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>::StringBase(const CharType& character)
 //     {
 //         _size = 1;
 //         _capacity = _bufferSize - 1;
 //         _data.buffer[0] = character;
 //     }
 
-//     template<typename CharType>
-//     StringBase<CharType>::StringBase(const StringBase& string)
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>::StringBase(const StringBase& string)
 //         :StringBase(string.Data(), string._size)
 //     {
 //     }
 
-//     template<typename CharType>
-//     StringBase<CharType>::StringBase(StringBase&& string)
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>::StringBase(StringBase&& string)
 //     {
 //         // Copy
 //         _size = string._size;
@@ -293,8 +352,8 @@ namespace Fir
 //         memset(&string._data, 0, sizeof(_data));
 //     }
 
-//     template<typename CharType>
-//     StringBase<CharType>::~StringBase()
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>::~StringBase()
 //     {
 //         if (_IsLong())
 //             free(_data.ptr);
@@ -304,8 +363,8 @@ namespace Fir
 // //* [SECTION]: Public Member Functions
 // //* ==================================================
 
-//     template<typename CharType>
-//     StringBase<CharType>& StringBase<CharType>::Append(const StringBase<CharType>& string)
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>& StringBase<CharType, AllocType>::Append(const StringBase<CharType, AllocType>& string)
 //     {
 //         size_t newSize = Size() + string.Size();
 //         if (newSize > Capacity())
@@ -317,51 +376,51 @@ namespace Fir
 //         return *this;
 //     }
 
-//     template<typename CharType>
-//     CharType& StringBase<CharType>::Begin() const
+//     template<typename CharType, typename AllocType>
+//     CharType& StringBase<CharType, AllocType>::Begin() const
 //     {
 //         return operator[](0);
 //     }
 
-//     template<typename CharType>
-//     size_t StringBase<CharType>::Capacity() const
+//     template<typename CharType, typename AllocType>
+//     size_t StringBase<CharType, AllocType>::Capacity() const
 //     {
 //         return _capacity;
 //     }
 
-//     template<typename CharType>
-//     const CharType* StringBase<CharType>::Data() const
+//     template<typename CharType, typename AllocType>
+//     const CharType* StringBase<CharType, AllocType>::Data() const
 //     {
 //         return _IsLong() ? _data.ptr : _data.buffer;
 //     }
 
-//     template<typename CharType>
-//     bool StringBase<CharType>::Empty() const
+//     template<typename CharType, typename AllocType>
+//     bool StringBase<CharType, AllocType>::Empty() const
 //     {
 //         return Size() == 0;
 //     }
 
-//     template<typename CharType>
-//     CharType& StringBase<CharType>::End() const
+//     template<typename CharType, typename AllocType>
+//     CharType& StringBase<CharType, AllocType>::End() const
 //     {
 //         return operator[](Size() - 1);
 //     }
 
-//     template<typename CharType>
-//     size_t StringBase<CharType>::Find(CharType character)
+//     template<typename CharType, typename AllocType>
+//     size_t StringBase<CharType, AllocType>::Find(CharType character)
 //     {
 //         CharType* ptr = Traits::Find(&Begin(), character);
 //         return ptr ? ptr - Data() : NO_POS;
 //     }
 
-//     template<typename CharType>
-//     size_t StringBase<CharType>::Length() const
+//     template<typename CharType, typename AllocType>
+//     size_t StringBase<CharType, AllocType>::Length() const
 //     {
 //         return _size;
 //     }
 
-//     template<typename CharType>
-//     StringBase<CharType>& StringBase<CharType>::Replace(const CharType* string)
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>& StringBase<CharType, AllocType>::Replace(const CharType* string)
 //     {
 //         size_t len = Traits::Length(string);
 //         CharType* ptr = &Begin();
@@ -375,14 +434,14 @@ namespace Fir
 //         return *this;
 //     }
 
-//     template<typename CharType>
-//     void StringBase<CharType>::Reserve(size_t newCap)
+//     template<typename CharType, typename AllocType>
+//     void StringBase<CharType, AllocType>::Reserve(size_t newCap)
 //     {
 //         _Reallocate(newCap);
 //     }
 
-//     template<typename CharType>
-//     StringBase<CharType>& StringBase<CharType>::Reverse()
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>& StringBase<CharType, AllocType>::Reverse()
 //     {
 //         size_t i, j;
 //         CharType c;
@@ -397,15 +456,15 @@ namespace Fir
 //         return *this;
 //     }
 
-//     template<typename CharType>
-//     void StringBase<CharType>::Shrink()
+//     template<typename CharType, typename AllocType>
+//     void StringBase<CharType, AllocType>::Shrink()
 //     {
 //         if (_IsLong())
 //             _Reallocate(Size());
 //     }
 
-//     template<typename CharType>
-//     size_t StringBase<CharType>::Size() const
+//     template<typename CharType, typename AllocType>
+//     size_t StringBase<CharType, AllocType>::Size() const
 //     {
 //         return _size;
 //     }
@@ -414,14 +473,14 @@ namespace Fir
 // //* [SECTION]: Operators
 // //* ==================================================
 
-//     template<typename CharType>
-//     StringBase<CharType>& StringBase<CharType>::operator+=(const StringBase& string)
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>& StringBase<CharType, AllocType>::operator+=(const StringBase& string)
 //     {
 //         return Append(string);
 //     }
 
-//     template<typename CharType>
-//     StringBase<CharType> StringBase<CharType>::operator+(const StringBase<CharType>& string)
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType> StringBase<CharType, AllocType>::operator+(const StringBase<CharType, AllocType>& string)
 //     {
 //         auto ret = *this;
 //         ret.Append(string);
@@ -429,26 +488,26 @@ namespace Fir
 //         return ret;
 //     }
 
-//     template<typename CharType>
-//     bool StringBase<CharType>::operator==(const StringBase<CharType>& string)
+//     template<typename CharType, typename AllocType>
+//     bool StringBase<CharType, AllocType>::operator==(const StringBase<CharType, AllocType>& string)
 //     {
 //         return (Size() == string.Size()) && Traits::Compare(Data(), string.Data(), Size());
 //     }
 
-//     template<typename CharType>
-//     bool StringBase<CharType>::operator!=(const StringBase<CharType>& string)
+//     template<typename CharType, typename AllocType>
+//     bool StringBase<CharType, AllocType>::operator!=(const StringBase<CharType, AllocType>& string)
 //     {
 //         return !(*this == string);
 //     }
 
-//     template<typename CharType>
-//     StringBase<CharType>::operator bool() const
+//     template<typename CharType, typename AllocType>
+//     StringBase<CharType, AllocType>::operator bool() const
 //     {
 //         return Size() != 0;
 //     }
 
-//     template<typename CharType>
-//     CharType& StringBase<CharType>::operator[](size_t index) const
+//     template<typename CharType, typename AllocType>
+//     CharType& StringBase<CharType, AllocType>::operator[](size_t index) const
 //     {
 //         return const_cast<CharType&>(Data()[index]);
 //     }
@@ -457,14 +516,14 @@ namespace Fir
 // //* [SECTION]: Private Member Functions
 // //* ==================================================
 
-//     template<typename CharType>
-//     bool StringBase<CharType>::_IsLong() const
+//     template<typename CharType, typename AllocType>
+//     bool StringBase<CharType, AllocType>::_IsLong() const
 //     {
 //         return _capacity > _bufferSize;
 //     }
 
-//     template<typename CharType>
-//     CharType* StringBase<CharType>::_Reallocate(size_t newCap)
+//     template<typename CharType, typename AllocType>
+//     CharType* StringBase<CharType, AllocType>::_Reallocate(size_t newCap)
 //     {
 //         // Stack allocated strings can fit 15 bytes.
 //         // Any bigger strings will be allocated on the heap.
