@@ -18,6 +18,7 @@ namespace Fir
         Type& Front();
         const Type& Front() const;
 
+        bool Empty() const;
         size_t Size() const;
 
     public:
@@ -71,6 +72,9 @@ namespace Fir
 //* ==================================================
 //* [SECTION]: Capacity Member Functions
 //* ==================================================
+
+    template<typename Type, size_t ArrSize>
+    bool _FIR Array<Type, ArrSize>::Empty() const { return ArrSize == 0; }
 
     template<typename Type, size_t ArrSize>
     size_t _FIR Array<Type, ArrSize>::Size() const { return ArrSize; }
