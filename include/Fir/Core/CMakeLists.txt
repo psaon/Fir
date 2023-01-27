@@ -4,7 +4,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 set(FIR_CORE_SOURCE_FILES 
     # Include Files
     Allocator.h
-    #Array.h
+    Array.h
     CharTraits.h
     Exception.h
     String.h

@@ -5,99 +5,76 @@
 
 namespace Fir
 {
-    template<typename Type, size_t ArraySize>
+    template<typename Type, size_t ArrSize>
     class Array
     {
     public:
-        /**
-         * Accesses the first element of the array.
-        */
-        Type& Begin() const
-        {
-            return operator[](0);
-        }
+        Type& At(const size_t p_index);
+        const Type& At(const size_t p_index) const;
 
-        /**
-         * Retrieves the underlying C-styled array.
-        */
-        Type* Data() const
-        {
-            return const_cast<Type*>(_data);
-        }
-
-        /**
-         * Tests whether the array is empty.
-        */
-        bool Empty() const
-        {
-            return Begin() == End();
-        }
-
-        /**
-         * Accesses the last element of the array.
-        */
-        Type& End() const
-        {
-            return operator[](ArraySize - 1);
-        }
-
-        /**
-         * Gets the size of the array.
-        */
-        size_t Size() const
-        {
-            return ArraySize;
-        }
+        size_t Size() const;
 
     public:
-        /**
-         * Tests whether the array is not empty.
-        */
-        explicit operator bool() const { return !Empty(); }
-
-        /**
-         * Accesses the element at the specified index.
-        */
-        Type& operator[](size_t index) const
-        {
-            return Data()[index];
-        }
-
-        /**
-         * Tests whether the two arrays are the same.
-        */
-        template<typename Type2, size_t Size2>
-        bool operator==(const Array<Type2, Size2>& arr) const
-        {
-            if (Size() != Size2)
-                return false;
-
-            for (size_t i = 0; i < Size(); ++i)
-            {
-                if (operator[](i) != arr[i])
-                    return false;
-            }
-
-            return true;
-        }
-
-        /**
-         * Tests whether the two arrays are different.
-        */
-        template<typename Type2, size_t Size2>
-        bool operator!=(const Array<Type2, Size2>& arr) const
-        {
-            return !(*this == arr);
-        }
+        Type& operator[](const size_t p_index);
+        const Type& operator[](const size_t p_index) const;
 
     public:
-        Type _data[ArraySize];
+        Type _data[ArrSize];
     };
+    
+//* ==================================================
+//* [SECTION]: Element Access Member Functions
+//* ==================================================
 
-    template<typename Type, size_t ArraySize, typename... Types>
-    FIR_FORCEINLINE Array<Type, ArraySize> MakeArray(Types&&... elements)
+    template<typename Type, size_t ArrSize>
+    Type& _FIR Array<Type, ArrSize>::At(const size_t p_index)
     {
-        return { static_cast<Types&&>(elements)... };
+        if (p_index >= ArrSize)
+            return _FIR OutOfBoundsException();
+
+        return operator[](p_index);
+    }
+
+    template<typename Type, size_t ArrSize>
+    const Type& _FIR Array<Type, ArrSize>::At(const size_t p_index) const
+    {
+        if (p_index >= ArrSize)
+            return _FIR OutOfBoundsException();
+
+        return operator[](p_index);
+    }
+
+//* ==================================================
+//* [SECTION]: Capacity Member Functions
+//* ==================================================
+
+    template<typename Type, size_t ArrSize>
+    size_t _FIR Array<Type, ArrSize>::Size() const { return ArrSize; }
+
+//* ==================================================
+//* [SECTION]: Operator Member Functions
+//* ==================================================
+
+    template<typename Type, size_t ArrSize>
+    Type& _FIR Array<Type, ArrSize>::operator[](const size_t p_index)
+    {
+        return _data[p_index];
+    }
+
+    template<typename Type, size_t ArrSize>
+    const Type& _FIR Array<Type, ArrSize>::operator[](const size_t p_index) const
+    {
+        return _data[p_index];
+    }
+
+//* ==================================================
+//* [SECTION]: Factory Function
+//* ==================================================
+
+    template<typename Type, typename... Args>
+    FIR_FORCEINLINE _FIR Array<Type, sizeof(Args)...> MakeArray(Args&&... p_args)
+    {
+        return _FIR Array<Type, sizeof(Args)...>{static_cast<Type&&>(p_args)...};
     }
 }
 
