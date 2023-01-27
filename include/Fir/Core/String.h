@@ -59,6 +59,9 @@ namespace Fir
         _String operator+(const _String& p_src);
         _String& operator+=(const _String& p_src);
 
+        bool operator==(const _String& p_str);
+        bool operator!=(const _String& p_str);
+
     private:
         // Checks whether the string is allocated on the heap.
         bool _IsLong() const;

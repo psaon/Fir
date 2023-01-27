@@ -314,6 +314,18 @@ namespace Fir
         return Append(p_src);
     }
 
+    template<typename CharType, typename AllocType>
+    bool _FIR StringBase<CharType, AllocType>::operator==(const _String& p_str)
+    {
+        return _Traits::Equal(Data(), p_str.Data());
+    }
+
+    template<typename CharType, typename AllocType>
+    bool _FIR StringBase<CharType, AllocType>::operator!=(const _String& p_str)
+    {
+        return !(*this == p_str);
+    }
+
 //* ==================================================
 //* [SECTION]: Private Member Functions
 //* ==================================================

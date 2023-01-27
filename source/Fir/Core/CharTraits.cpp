@@ -44,9 +44,19 @@ namespace Fir
 	}
 
 	template<typename CharType>
-	bool CharTraits<CharType>::Equal(const CharType* p_str1, const CharType* p_str2, size_t p_n)
+	bool CharTraits<CharType>::Equal(const CharType* p_str1, const CharType* p_str2)
 	{
-		return memcmp(p_str1, p_str2, p_n) == 0;
+		// Just in case, if 2 empty strings are passed in.
+		if (*p_str1 != *p_str2)
+			return false;
+
+		while (*p_str1)
+		{
+			if (*p_str1++ != *p_str2++)
+				return false;
+		}
+
+		return true;
 	}
 
 	template<typename CharType>

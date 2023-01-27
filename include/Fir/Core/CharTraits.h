@@ -27,7 +27,7 @@ namespace Fir
         /**
          * Tests whether the two specified strings are equal.
         */
-        static bool Equal(const CharType* p_str1, const CharType* p_str2, size_t p_n);
+        static bool Equal(const CharType* p_str1, const CharType* p_str2);
 
         /**
          * Searches for the character specified.
