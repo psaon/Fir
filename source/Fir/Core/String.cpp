@@ -182,6 +182,40 @@ namespace Fir
     }
 
     template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>& _FIR StringBase<CharType, AllocType>::Shrink()
+    {
+        // Return if the capacity is smaller than or equal to size.
+        if (Capacity() == Size())
+            return *this;
+        else if (Capacity() < Size())
+            throw _FIR UnknownException();      // If this happens then we have a bug lol
+
+        // If the string is originally not heap allocated, ignore it.
+        if (!_IsLong())
+            return *this;
+
+        // Check whether the string should be stack or heap allocated.
+        if (Size() <= _bufferSize - 1)
+        {
+            CharType* ptr = _data.ptr;
+            _Traits::Copy(_data.buffer, ptr);
+
+            _allocator.Free(ptr);
+        }
+        else
+        {
+            CharType* ptr = (CharType*)_allocator.Reallocate(_data.ptr, (Size() + 1) * sizeof(CharType));
+            if (!ptr)
+                throw _FIR FailedAllocException();
+
+            _data.ptr = ptr;
+        }
+
+        _capacity = Size();
+        return *this;
+    }
+
+    template<typename CharType, typename AllocType>
     size_t _FIR StringBase<CharType, AllocType>::Size() const { return _size; }
 
 //* ==================================================
@@ -268,7 +302,7 @@ namespace Fir
     template<typename CharType, typename AllocType>
     _FIR StringBase<CharType, AllocType> _FIR StringBase<CharType, AllocType>::operator+(const _String& p_src)
     {
-        Fir::String ret = *this;
+        _String ret = *this;
         ret.Append(p_src);
 
         return ret;

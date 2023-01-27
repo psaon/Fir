@@ -16,13 +16,16 @@ namespace Fir
     };
 }
 
-#define FIR_DEFINE_EXCEPTION(name, msg) \
+#define _FIR_DEFINE_EXCEPTION(name, msg) \
     class name : public ::Fir::Exception { public: virtual const char* What() const noexcept override { return msg; } }
 
 namespace Fir
 {
-    FIR_DEFINE_EXCEPTION(FailedAllocException, "Failed to allocate memory.");
-    FIR_DEFINE_EXCEPTION(OutOfBoundsException, "Out of bounds.");
+    _FIR_DEFINE_EXCEPTION(FailedAllocException, "Failed to allocate memory.");
+    _FIR_DEFINE_EXCEPTION(OutOfBoundsException, "Out of bounds.");
+    _FIR_DEFINE_EXCEPTION(UnknownException, "Unknown error occured.");
 }
+
+#undef _FIR_DEFINE_EXCEPTION
 
 #endif        // Exception.h

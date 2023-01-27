@@ -44,6 +44,7 @@ namespace Fir
         bool Empty() const;
         size_t Length() const;
         _String& Reserve(const size_t p_newCap);
+        _String& Shrink();
         size_t Size() const;
 
         _String& Append(const _String& p_src);
