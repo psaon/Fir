@@ -232,6 +232,28 @@ namespace Fir
         return *this;
     }
 
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>& _FIR StringBase<CharType, AllocType>::Clear()
+    {
+        _size = 0;
+        operator[](0) = _Traits::NULL_CHAR;
+        return *this;
+    }
+
+//* ==================================================
+//* [SECTION]: Search Member Functions
+//* ==================================================
+
+    template<typename CharType, typename AllocType>
+    size_t _FIR StringBase<CharType, AllocType>::Find(CharType p_char, size_t p_begin)
+    {
+        CharType* ch = _Traits::Find(&Front() + p_begin, p_char);
+        if (!ch)
+            return NO_POS;
+
+        return ch - &Front();
+    }
+
 //* ==================================================
 //* [SECTION]: Operator Member Functions
 //* ==================================================
@@ -336,6 +358,10 @@ namespace Fir
         return _capacity > _bufferSize - 1;
     }
 
+//* ==================================================
+//* [SECTION]: Explicit Template Instanciation
+//* ==================================================
+
     template class _FIR StringBase<char, _FIR Allocator>;
     template class _FIR StringBase<wchar_t, _FIR Allocator>;
 
@@ -359,301 +385,3 @@ namespace Fir
     template class _FIR StringBase<char32_t, FIR_STRING_CUSTOM_ALLOCATOR>;
 #endif
 }
-
-// #include <string.h>
-// #include <stdlib.h>
-
-// namespace Fir
-// {
-// //* ==================================================
-// //* [SECTION]: Constructor & Destructor
-// //* ==================================================
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>::StringBase(const CharType* string)
-//         :StringBase(string, Traits::Length(string))
-//     {
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>::StringBase(const CharType* string, size_t size)
-//     {
-//         CharType* buffer;
-//         _size = size;
-
-//         if (_size < _bufferSize)
-//         {
-//             buffer = _data.buffer;
-//             _capacity = _bufferSize - 1;
-//         }
-//         else
-//         {
-//             buffer = _data.ptr = (CharType*)calloc(_size + 1, sizeof(CharType));
-//             if (!_data.ptr)
-//                 throw FailedAllocException();
-
-//             _capacity = _size;
-//         }
-
-//         Traits::Copy(buffer, string);
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>::StringBase(const CharType& character)
-//     {
-//         _size = 1;
-//         _capacity = _bufferSize - 1;
-//         _data.buffer[0] = character;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>::StringBase(const StringBase& string)
-//         :StringBase(string.Data(), string._size)
-//     {
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>::StringBase(StringBase&& string)
-//     {
-//         // Copy
-//         _size = string._size;
-//         _capacity = string._capacity;
-
-//         memcpy(&_data, &string._data, sizeof(_data));
-
-//         // Set to 0
-//         string._size = 0;
-//         string._capacity = 0;
-//         memset(&string._data, 0, sizeof(_data));
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>::~StringBase()
-//     {
-//         if (_IsLong())
-//             free(_data.ptr);
-//     }
-
-// //* ==================================================
-// //* [SECTION]: Public Member Functions
-// //* ==================================================
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>& StringBase<CharType, AllocType>::Append(const StringBase<CharType, AllocType>& string)
-//     {
-//         size_t newSize = Size() + string.Size();
-//         if (newSize > Capacity())
-//             _Reallocate(newSize);
-
-//         Traits::Append(_IsLong() ? _data.ptr : _data.buffer, string.Data());
-//         _size = newSize;
-        
-//         return *this;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     CharType& StringBase<CharType, AllocType>::Begin() const
-//     {
-//         return operator[](0);
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     size_t StringBase<CharType, AllocType>::Capacity() const
-//     {
-//         return _capacity;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     const CharType* StringBase<CharType, AllocType>::Data() const
-//     {
-//         return _IsLong() ? _data.ptr : _data.buffer;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     bool StringBase<CharType, AllocType>::Empty() const
-//     {
-//         return Size() == 0;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     CharType& StringBase<CharType, AllocType>::End() const
-//     {
-//         return operator[](Size() - 1);
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     size_t StringBase<CharType, AllocType>::Find(CharType character)
-//     {
-//         CharType* ptr = Traits::Find(&Begin(), character);
-//         return ptr ? ptr - Data() : NO_POS;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     size_t StringBase<CharType, AllocType>::Length() const
-//     {
-//         return _size;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>& StringBase<CharType, AllocType>::Replace(const CharType* string)
-//     {
-//         size_t len = Traits::Length(string);
-//         CharType* ptr = &Begin();
-
-//         if (len > Capacity())
-//             ptr = _Reallocate(len);
-
-//         Traits::Copy(ptr, string);
-//         _size = len;
-
-//         return *this;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     void StringBase<CharType, AllocType>::Reserve(size_t newCap)
-//     {
-//         _Reallocate(newCap);
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>& StringBase<CharType, AllocType>::Reverse()
-//     {
-//         size_t i, j;
-//         CharType c;
-
-//         for (i = 0, j = Size() - 1; i < j; ++i, --j)
-//         {
-//             c = operator[](i);
-//             operator[](i) = operator[](j);
-//             operator[](j) = c;
-//         }
-
-//         return *this;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     void StringBase<CharType, AllocType>::Shrink()
-//     {
-//         if (_IsLong())
-//             _Reallocate(Size());
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     size_t StringBase<CharType, AllocType>::Size() const
-//     {
-//         return _size;
-//     }
-
-// //* ==================================================
-// //* [SECTION]: Operators
-// //* ==================================================
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>& StringBase<CharType, AllocType>::operator+=(const StringBase& string)
-//     {
-//         return Append(string);
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType> StringBase<CharType, AllocType>::operator+(const StringBase<CharType, AllocType>& string)
-//     {
-//         auto ret = *this;
-//         ret.Append(string);
-
-//         return ret;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     bool StringBase<CharType, AllocType>::operator==(const StringBase<CharType, AllocType>& string)
-//     {
-//         return (Size() == string.Size()) && Traits::Compare(Data(), string.Data(), Size());
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     bool StringBase<CharType, AllocType>::operator!=(const StringBase<CharType, AllocType>& string)
-//     {
-//         return !(*this == string);
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     StringBase<CharType, AllocType>::operator bool() const
-//     {
-//         return Size() != 0;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     CharType& StringBase<CharType, AllocType>::operator[](size_t index) const
-//     {
-//         return const_cast<CharType&>(Data()[index]);
-//     }
-
-// //* ==================================================
-// //* [SECTION]: Private Member Functions
-// //* ==================================================
-
-//     template<typename CharType, typename AllocType>
-//     bool StringBase<CharType, AllocType>::_IsLong() const
-//     {
-//         return _capacity > _bufferSize;
-//     }
-
-//     template<typename CharType, typename AllocType>
-//     CharType* StringBase<CharType, AllocType>::_Reallocate(size_t newCap)
-//     {
-//         // Stack allocated strings can fit 15 bytes.
-//         // Any bigger strings will be allocated on the heap.
-
-//         if (newCap < _bufferSize)
-//         {
-//             if (_IsLong())
-//             {
-//                 CharType* heapBuffer = _data.ptr;
-//                 memcpy(_data.buffer, heapBuffer, sizeof(CharType) * _bufferSize);   // Can cause buffer overflows if using Traits::Copy
-//                 free(heapBuffer);
-
-//                 _capacity = _bufferSize - 1;
-//             }
-
-//             return _data.buffer;
-//         }
-//         else
-//         {
-//             if (_IsLong())
-//             {
-//                 CharType* newBlock = (CharType*)realloc(_data.ptr, (newCap + 1) * sizeof(CharType));
-//                 if (newBlock)
-//                     _data.ptr = newBlock;
-//                 else
-//                 {
-//                     free(_data.ptr);
-//                     throw FailedAllocException();
-//                 }
-//             }
-//             else
-//             {
-//                 CharType* heapBuffer = (CharType*)calloc(newCap + 1, sizeof(CharType));
-//                 if (!heapBuffer)
-//                     throw FailedAllocException();
-
-//                 Traits::Copy(heapBuffer, _data.buffer);
-//                 _data.ptr = heapBuffer;
-//             }
-
-//             _capacity = newCap;
-//             return _data.ptr;
-//         }
-//     }
-
-// //* ==================================================
-// //* [SECTION]: Explicit Template Instantiation
-// //* ==================================================
-//     template class StringBase<char>;
-//     template class StringBase<wchar_t>;
-
-// #if __cplusplus == 202022L
-//     template class StringBase<char8_t>;
-// #endif
-
-//     template class StringBase<char16_t>;
-//     template class StringBase<char32_t>;
-// }

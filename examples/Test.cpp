@@ -3,9 +3,13 @@
 
 int main()
 {
-	Fir::CharTraits<char>::Equal("Hello,", "Hello");
-	Fir::CharTraits<char>::Equal("", "Hello");
-	Fir::CharTraits<char>::Equal("Hello, World!", "Hello, World!");
-	Fir::CharTraits<char>::Equal("Hello,", "Helloasda");
-	Fir::CharTraits<char>::Equal("", "");
+    Fir::String string = "Hello, World!";
+    string.Find(',', 2);        // found
+    string.Find(',', 5);        // found
+    string.Find(',', 6);        // not found
+
+    string.Find('H');           // found
+    string.Find('!');           // found
+    string.Find('h');           // not found
+    string.Find('\0');          // not found
 }
