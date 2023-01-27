@@ -12,5 +12,5 @@ int main()
 	Fir::String str3 = "abcdefghijklmnopq";
 	str3.Append("rstuvwxyz0123456789");
 
-	printf("%s, %s, %s\n", string.Data(), str2.Data(), str3.Data());
+	
 }

@@ -55,6 +55,9 @@ namespace Fir
         CharType& operator[](const size_t p_index);
         const CharType& operator[](const size_t p_index) const;
 
+        _String operator+(const _String& p_src);
+        _String& operator+=(const _String& p_src);
+
     private:
         // Checks whether the string is allocated on the heap.
         bool _IsLong() const;

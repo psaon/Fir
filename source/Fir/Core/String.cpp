@@ -265,6 +265,21 @@ namespace Fir
         return buffer[p_index];
     }
 
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType> _FIR StringBase<CharType, AllocType>::operator+(const _String& p_src)
+    {
+        Fir::String ret = *this;
+        ret.Append(p_src);
+
+        return ret;
+    }
+
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>& _FIR StringBase<CharType, AllocType>::operator+=(const _String& p_src)
+    {
+        return Append(p_src);
+    }
+
 //* ==================================================
 //* [SECTION]: Private Member Functions
 //* ==================================================
