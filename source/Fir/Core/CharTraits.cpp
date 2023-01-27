@@ -37,6 +37,9 @@ namespace Fir
 		while (*p_src)
 			*end++ = *p_src++;
 
+		// Add the null terminator at the end of the string.
+		*end++ = NULL_CHAR;
+
 		return p_dest;
 	}
 

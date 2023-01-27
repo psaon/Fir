@@ -185,6 +185,20 @@ namespace Fir
     size_t _FIR StringBase<CharType, AllocType>::Size() const { return _size; }
 
 //* ==================================================
+//* [SECTION]: String Operation Member Functions
+//* ==================================================
+
+    template<typename CharType, typename AllocType>
+    _FIR StringBase<CharType, AllocType>& _FIR StringBase<CharType, AllocType>::Append(const _String& p_src)
+    {
+        // Reserve memory for the destination's and the source's string.
+        Reserve(Size() + p_src.Size());
+
+        _Traits::Append(&Front(), p_src.Data());
+        return *this;
+    }
+
+//* ==================================================
 //* [SECTION]: Operator Member Functions
 //* ==================================================
 

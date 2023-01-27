@@ -46,6 +46,8 @@ namespace Fir
         _String& Reserve(const size_t p_newCap);
         size_t Size() const;
 
+        _String& Append(const _String& p_src);
+
     public:
         _String& operator=(const _String& p_str);
         _String& operator=(_String&& p_str);
