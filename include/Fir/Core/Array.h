@@ -8,6 +8,9 @@ namespace Fir
     template<typename Type, size_t ArrSize>
     class Array
     {
+    private:
+        using _Array = _FIR Array<Type, ArrSize>;
+
     public:
         Type& At(const size_t p_index);
         const Type& At(const size_t p_index) const;
@@ -24,6 +27,9 @@ namespace Fir
     public:
         Type& operator[](const size_t p_index);
         const Type& operator[](const size_t p_index) const;
+
+        bool operator==(const _FIR Array<Type, ArrSize>& p_arr) const;
+        bool operator!=(const _FIR Array<Type, ArrSize>& p_arr) const;
 
     public:
         Type _data[ArrSize];
@@ -93,6 +99,24 @@ namespace Fir
     const Type& _FIR Array<Type, ArrSize>::operator[](const size_t p_index) const
     {
         return _data[p_index];
+    }
+
+    template<typename Type, size_t ArrSize>
+    bool _FIR Array<Type, ArrSize>::operator==(const _Array& p_arr) const
+    {
+        for (size_t i = 0; i < Size(); ++i)
+        {
+            if (operator[](i) != p_arr[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    template<typename Type, size_t ArrSize>
+    bool _FIR Array<Type, ArrSize>::operator!=(const _Array& p_arr) const
+    {
+        return !(*this == p_arr);
     }
 
 //* ==================================================
