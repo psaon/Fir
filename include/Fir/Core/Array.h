@@ -11,6 +11,12 @@ namespace Fir
     public:
         Type& At(const size_t p_index);
         const Type& At(const size_t p_index) const;
+        Type& Back();
+        const Type& Back() const;
+        Type* Data();
+        const Type* Data() const;
+        Type& Front();
+        const Type& Front() const;
 
         size_t Size() const;
 
@@ -44,6 +50,24 @@ namespace Fir
         return operator[](p_index);
     }
 
+    template<typename Type, size_t ArrSize>
+    Type& _FIR Array<Type, ArrSize>::Back() { return _data[ArrSize - 1]; }
+
+    template<typename Type, size_t ArrSize>
+    const Type& _FIR Array<Type, ArrSize>::Back() const { return _data[ArrSize - 1]; }
+
+    template<typename Type, size_t ArrSize>
+    Type* _FIR Array<Type, ArrSize>::Data() { return _data; }
+
+    template<typename Type, size_t ArrSize>
+    const Type* _FIR Array<Type, ArrSize>::Data() const { return _data; }
+
+    template<typename Type, size_t ArrSize>
+    Type& _FIR Array<Type, ArrSize>::Front() { return _data[0]; }
+
+    template<typename Type, size_t ArrSize>
+    const Type& _FIR Array<Type, ArrSize>::Front() const { return _data[0]; }
+
 //* ==================================================
 //* [SECTION]: Capacity Member Functions
 //* ==================================================
@@ -74,7 +98,7 @@ namespace Fir
     template<typename Type, typename... Args>
     FIR_FORCEINLINE _FIR Array<Type, sizeof(Args)...> MakeArray(Args&&... p_args)
     {
-        return _FIR Array<Type, sizeof(Args)...>{static_cast<Type&&>(p_args)...};
+        return _FIR Array<Type, sizeof(Args)...>{ static_cast<Type&&>(p_args)... };
     }
 }
 
