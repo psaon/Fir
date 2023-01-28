@@ -28,8 +28,8 @@ namespace Fir
         Type& operator[](const size_t p_index);
         const Type& operator[](const size_t p_index) const;
 
-        bool operator==(const _FIR Array<Type, ArrSize>& p_arr) const;
-        bool operator!=(const _FIR Array<Type, ArrSize>& p_arr) const;
+        bool operator==(const _Array& p_arr);
+        bool operator!=(const _Array& p_arr);
 
     public:
         Type _data[ArrSize];
@@ -102,7 +102,7 @@ namespace Fir
     }
 
     template<typename Type, size_t ArrSize>
-    bool _FIR Array<Type, ArrSize>::operator==(const _Array& p_arr) const
+    bool _FIR Array<Type, ArrSize>::operator==(const _Array& p_arr)
     {
         for (size_t i = 0; i < Size(); ++i)
         {
@@ -114,7 +114,7 @@ namespace Fir
     }
 
     template<typename Type, size_t ArrSize>
-    bool _FIR Array<Type, ArrSize>::operator!=(const _Array& p_arr) const
+    bool _FIR Array<Type, ArrSize>::operator!=(const _Array& p_arr)
     {
         return !(*this == p_arr);
     }

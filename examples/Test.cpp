@@ -4,6 +4,5 @@
 
 int main()
 {
-    Fir::Array<size_t, 3> arr = { 0, 1, 2 };
-	arr.Size();
+    
 }
