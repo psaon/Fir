@@ -1,5 +1,5 @@
-#ifndef __FIR_INCLUDE_CONFIG_H__
-#define __FIR_INCLUDE_CONFIG_H__
+#ifndef __FIR_CORE_CONFIG_H__
+#define __FIR_CORE_CONFIG_H__
 
 #define FIR_SSO_MAX_CHARS 16
 

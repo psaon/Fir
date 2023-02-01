@@ -1,5 +1,5 @@
-#ifndef __FIR_INCLUDE_ALLOCATOR_H__
-#define __FIR_INCLUDE_ALLOCATOR_H__
+#ifndef __FIR_MEMORY_ALLOCATOR_H__
+#define __FIR_MEMORY_ALLOCATOR_H__
 
 #include "Fir/Core/Core.h"
 
