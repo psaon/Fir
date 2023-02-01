@@ -20,6 +20,8 @@ namespace Fir
 
 #define _FIR_DEFINE_EXCEPTION(name, msg) \
     class name : public _FIR Exception { virtual const char* What() const noexcept override { return msg; } }
+
+    _FIR_DEFINE_EXCEPTION(FailedAllocException, "Failed to allocate memory.");
 }
 
 #undef _FIR_DEFINE_EXCEPTION
