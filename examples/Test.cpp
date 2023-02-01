@@ -1,8 +1,9 @@
-#include <stdio.h>
-#include <Fir/Core/Array.h>
-#include <Fir/Core/String.h>
+#include <Fir/Memory/Allocator.h>
 
-int main()
+int main(int argc, char** argv)
 {
-    
+	FIR_UNREF(argc);    FIR_UNREF(argv);
+	
+	Fir::Allocator allocator;
+	void* mem = allocator.Allocate(20);
 }

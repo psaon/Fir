@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -28,8 +28,8 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 endif()
 
 # Add the core library.
-add_subdirectory(include/Fir/Core)
+add_subdirectory(Fir)
 
 if (${FIR_BUILD_EXAMPLES})
-    add_subdirectory(examples)
+    add_subdirectory(Examples)
 endif()
