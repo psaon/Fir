@@ -3,6 +3,8 @@ project(Fir VERSION 0.1.0 LANGUAGES CXX)
 set(FIR_SOURCE_FILES 
 
     # Include Files
+    Containers/Array.h
+
     Core/Config.h
     Core/Core.h
     Core/Macros.h
