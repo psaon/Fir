@@ -23,11 +23,10 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 endif()
 
 # Macros for build types.
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     add_definitions("-DFIR_CONFIG_DEBUG")
 endif()
 
-# Add the core library.
 add_subdirectory(Fir)
 
 if (${FIR_BUILD_EXAMPLES})

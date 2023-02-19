@@ -1,9 +1,7 @@
-#include <Fir/Memory/Allocator.h>
+#include "../Fir/Strings/String.h"
 
-int main(int argc, char** argv)
+int main()
 {
-	FIR_UNREF(argc);    FIR_UNREF(argv);
+	Fir::String string = "Hello, World!";
 	
-	Fir::Allocator allocator;
-	void* mem = allocator.Allocate(20);
 }

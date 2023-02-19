@@ -1,5 +1,4 @@
 project(Fir VERSION 0.1.0 LANGUAGES CXX)
-include_directories(../)
 
 set(FIR_SOURCE_FILES 
 
@@ -10,8 +9,14 @@ set(FIR_SOURCE_FILES
 
     Memory/Allocator.h
 
+    Strings/CharTraits.h
+    Strings/String.h
+
     # Source Files
     Memory/Allocator.cpp
+
+    Strings/CharTraits.cpp
+    Strings/String.cpp
 )
 
 if (${FIR_BUILD_SHARED})
@@ -21,3 +26,5 @@ else()
     add_library(Fir STATIC ${FIR_SOURCE_FILES})
     target_compile_definitions(Fir PUBLIC FIR_BUILD_STATIC=1)
 endif()
+
+target_include_directories(Fir PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../)
