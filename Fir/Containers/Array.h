@@ -118,16 +118,6 @@ namespace Fir
     {
         return !(*this == p_arr);
     }
-
-//* ==================================================
-//* [SECTION]: Factory Function
-//* ==================================================
-
-    template<typename Type, typename... Args>
-    FIR_FORCEINLINE _FIR Array<Type, sizeof(Args)...> MakeArray(Args&&... p_args)
-    {
-        return _FIR Array<Type, sizeof(Args)...>{ static_cast<Type&&>(p_args)... };
-    }
 }
 
 #endif      // Array.h
