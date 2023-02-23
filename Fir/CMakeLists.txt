@@ -10,6 +10,7 @@ set(FIR_SOURCE_FILES
     Core/Macros.h
 
     Memory/Allocator.h
+    Memory/ScopedPtr.h
 
     Strings/CharTraits.h
     Strings/String.h
