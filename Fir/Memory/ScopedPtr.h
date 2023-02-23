@@ -45,7 +45,7 @@ namespace Fir
 	};
 
 	template<typename Type, typename... Args>
-	FIR_FORCEINLINE ScopedPtr<Type> MakeScoped(Args&&... args)
+	ScopedPtr<Type> MakeScoped(Args&&... args)
 	{
 		return ScopedPtr<Type>(new Type(static_cast<Args&&>(args)...));
 	}
