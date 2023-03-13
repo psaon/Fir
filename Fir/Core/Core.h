@@ -5,5 +5,6 @@
 #include <stddef.h>     // For size_t, nullptr_t and ptrdiff_t types.
 
 #include "Fir/Core/Macros.h"
+#include "Fir/Core/Utils.h"
 
 #endif      // Core.h

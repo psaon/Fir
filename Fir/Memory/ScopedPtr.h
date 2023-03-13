@@ -5,50 +5,50 @@
 
 namespace Fir
 {
-	template<typename Type>
-	class ScopedPtr
-	{
-	public:
-		ScopedPtr() = default;
-		ScopedPtr(nullptr_t) {  }
-		explicit ScopedPtr(Type* p_ptr)
-			:_ptr(p_ptr)
-		{
-		}
+    template<typename Type>
+    class ScopedPtr
+    {
+    public:
+        ScopedPtr() = default;
+        ScopedPtr(nullptr_t) {  }
+        explicit ScopedPtr(Type* p_ptr)
+            :_ptr(p_ptr)
+        {
+        }
 
-		ScopedPtr(const ScopedPtr&) = delete;
-		ScopedPtr(ScopedPtr&& p_ptr)
-			:_ptr(p_ptr._ptr)
-		{
-			p_ptr._ptr = nullptr;
-		}
+        ScopedPtr(const ScopedPtr&) = delete;
+        ScopedPtr(ScopedPtr&& p_ptr)
+            :_ptr(p_ptr._ptr)
+        {
+            p_ptr._ptr = nullptr;
+        }
 
-		~ScopedPtr()
-		{
-			delete _ptr;
-		}
+        ~ScopedPtr()
+        {
+            delete _ptr;
+        }
 
-	public:
-		ScopedPtr& operator=(const ScopedPtr&) = delete;
-		ScopedPtr& operator=(ScopedPtr&& p_ptr)
-		{
-			delete _ptr;
-			_ptr = p_ptr._ptr;
-			p_ptr._ptr = nullptr;
-		}
+    public:
+        ScopedPtr& operator=(const ScopedPtr&) = delete;
+        ScopedPtr& operator=(ScopedPtr&& p_ptr)
+        {
+            delete _ptr;
+            _ptr = p_ptr._ptr;
+            p_ptr._ptr = nullptr;
+        }
 
-		Type& operator*() const { return *_ptr; }
-		Type* operator->() const { return _ptr; }
+        Type& operator*() const { return *_ptr; }
+        Type* operator->() const { return _ptr; }
 
-	private:
-		Type* _ptr = nullptr;
-	};
+    private:
+        Type* _ptr = nullptr;
+    };
 
-	template<typename Type, typename... Args>
-	ScopedPtr<Type> MakeScoped(Args&&... args)
-	{
-		return ScopedPtr<Type>(new Type(static_cast<Args&&>(args)...));
-	}
+    template<typename Type, typename... Args>
+    ScopedPtr<Type> MakeScoped(Args&&... args)
+    {
+        return ScopedPtr<Type>(new Type(static_cast<Args&&>(args)...));
+    }
 }
 
-#endif		// ScopedPtr.h
+#endif      // ScopedPtr.h

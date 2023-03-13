@@ -4,10 +4,12 @@ set(FIR_SOURCE_FILES
 
     # Include Files
     Containers/Array.h
+    Containers/Vector.h
 
     Core/Config.h
     Core/Core.h
     Core/Macros.h
+    Core/Utils.h
 
     Memory/Allocator.h
     Memory/ScopedPtr.h
