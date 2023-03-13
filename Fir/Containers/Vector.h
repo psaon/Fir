@@ -20,7 +20,7 @@ namespace Fir
         template<typename... Args>
         Vector(Args&&... p_args)
         {
-            static_assert(_FIR IsTypeSame<Args...>::value, "The types are not all the same!");
+            static_assert(_FIR IsTypeSame<Args...>::Value, "The types are not all the same!");
 
             Reserve(sizeof...(p_args));
             (Push(p_args), ...);

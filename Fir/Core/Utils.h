@@ -6,7 +6,7 @@ namespace Fir
     template<typename FirstType, typename SecondType, typename... Error>
     struct IsTypeSame
     {
-        static constexpr bool value = false;
+        static constexpr bool Value = false;
     };
 
     template<typename Type, typename... Checking>
@@ -15,7 +15,7 @@ namespace Fir
     template<typename Type>
     struct IsTypeSame<Type, Type>
     {
-        static constexpr bool value = true;
+        static constexpr bool Value = true;
     };
 }
 
